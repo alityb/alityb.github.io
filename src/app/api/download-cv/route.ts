@@ -18,13 +18,22 @@ export async function GET() {
         'Content-Type': 'application/pdf',
       },
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error serving PDF:', error);
-    return new NextResponse(JSON.stringify({ error: 'Error serving PDF', details: error.message }), { 
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+
+    let errorMessage = 'An unknown error occurred';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+
+    return new NextResponse(
+      JSON.stringify({ error: 'Error serving PDF', details: errorMessage }),
+      { 
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
   }
 }
